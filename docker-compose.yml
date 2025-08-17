@@ -1,0 +1,111 @@
+version: '3.8'
+
+services:
+  # SQL Server for all services
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - kayra-network
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - kayra-network
+
+  # Auth Service
+  authservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=AuthServiceDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true
+      - Jwt__SecretKey=your-super-secret-key-with-at-least-32-characters
+      - Jwt__Issuer=https://kayraexport.com
+      - Jwt__Audience=https://kayraexport.com
+    ports:
+      - "7001:80"
+    depends_on:
+      - sqlserver
+    networks:
+      - kayra-network
+
+  # Product Service
+  productservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=ProductServiceDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true
+      - ConnectionStrings__Redis=redis:6379
+      - Jwt__SecretKey=your-super-secret-key-with-at-least-32-characters
+      - Jwt__Issuer=https://kayraexport.com
+      - Jwt__Audience=https://kayraexport.com
+    ports:
+      - "7002:80"
+    depends_on:
+      - sqlserver
+      - redis
+    networks:
+      - kayra-network
+
+  # Log Service
+  logservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=LogServiceDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true
+    ports:
+      - "7003:80"
+    depends_on:
+      - sqlserver
+    networks:
+      - kayra-network
+
+  # API Gateway
+  apigateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - Jwt__SecretKey=your-super-secret-key-with-at-least-32-characters
+      - Jwt__Issuer=https://kayraexport.com
+      - Jwt__Audience=https://kayraexport.com
+    ports:
+      - "7000:80"
+    depends_on:
+      - authservice
+      - productservice
+      - logservice
+    networks:
+      - kayra-network
+
+volumes:
+  sqlserver_data:
+  redis_data:
+
+networks:
+  kayra-network:
+    driver: bridge
+
