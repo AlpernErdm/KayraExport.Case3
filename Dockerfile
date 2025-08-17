@@ -34,7 +34,7 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Create logs directory for LogService
+# Create logs directory for LogService   
 RUN mkdir -p /app/logs
 
 ENTRYPOINT ["dotnet", "ApiGateway.dll"]
