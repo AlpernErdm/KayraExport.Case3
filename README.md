@@ -322,24 +322,3 @@ docker run -p 7000:80 kayraexport-case3
 ### appsettings.json
 Her servis için ayrı konfigürasyon dosyası bulunur.
 
-## 📝 Commit Kuralları
-
-Her gün düzenli commit atılmalıdır:
-- `feat:` Yeni özellik
-- `fix:` Hata düzeltme
-- `docs:` Dokümantasyon
-- `style:` Kod formatı
-- `refactor:` Kod refactoring
-- `test:` Test ekleme/düzenleme
-- `chore:` Genel bakım
-
-## 🚀 Gelecek Geliştirmeler
-
-- [ ] SAGA Pattern implementasyonu
-- [ ] Role-based ve Policy-based Authorization
-- [ ] RabbitMQ/Kafka entegrasyonu
-- [ ] CI/CD pipeline
-- [ ] Kubernetes deployment
-- [ ] Health checks
-- [ ] Metrics collection (Prometheus)
-- [ ] Distributed tracing (Jaeger)
