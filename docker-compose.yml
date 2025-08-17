@@ -65,7 +65,7 @@ services:
     networks:
       - kayra-network
 
-  # Log Service
+  # Log Service for centralized logging
   logservice:
     build:
       context: .
