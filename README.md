@@ -14,7 +14,7 @@ Bu proje, .NET 9 kullanılarak geliştirilmiş, Onion mimari ve SOLID prensipler
 1. **Auth Service** - Kimlik doğrulama ve yetkilendirme
 2. **Product Service** - Ürün yönetimi (CQRS pattern)
 3. **Log Service** - Merkezi loglama
-4. **API Gateway** - Yarp ile merkezi yönlendirme
+4. **API Gateway** - Yarp ile merkezi yönlendirme ve API yönetimi
 
 ## 🚀 Teknolojiler
 
